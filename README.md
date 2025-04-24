@@ -10,6 +10,6 @@ A tool for highlighting code snippets in training documents and Jira tickets at 
 
 ## Todo
 
-- [ ] Refine Add/Remove line highlighting
+- [x] Refine Add/Remove line highlighting
+- [x] Add language and file path display in rendered output
 - [ ] Test with PHP code samples
-- [ ] Add language and file path display in rendered output

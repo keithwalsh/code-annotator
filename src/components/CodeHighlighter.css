@@ -23,7 +23,7 @@
   
 
 .code-block-error-line {
-    background-color: rgba(255, 0, 0, 0.1);
+    background-color: rgba(255, 0, 0, 0.09);
     display: block;
     position: relative;
   }
@@ -88,4 +88,14 @@
   flex-direction: column;
   overflow: hidden;
   border-radius: 4px;
+}
+
+.word-delete {
+  color: #1f2328;
+  background-color: #ffcecb;
+}
+
+.word-add {
+  color: #1f2328;
+  background-color: #aceebb;
 } 

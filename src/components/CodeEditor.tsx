@@ -5,10 +5,13 @@ import CodeHighlighter from './CodeHighlighter';
 const CodeEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState<string>(
 `\`\`\`javascript title="example.js"
-function example() {
-// Remove
-  console.log("Hello world!");
-  return 42;
+function sum(a) {
+  // Remove
+  const t = a[0].p * [-2.1-];
+  // Add
+  const t = a[0].p * [+3.2+];
+
+  return a[0].p + t;
 }
 \`\`\`
 `);

@@ -19,7 +19,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   const processCodeWithMagicComments = (codeString: string) => {
     const lines = codeString.split('\n');
     const lineHighlights = new Set<number>();
-    const wordHighlights: {line: number, word: string}[] = [];
+    const wordHighlights: {line: number, word: string, type: 'add' | 'delete'}[] = [];
     const errorLines = new Set<number>();
     const addLines = new Set<number>();
     const linesToFilter = new Set<number>();
@@ -36,7 +36,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
       if (line.includes('highlight-word')) {
         const wordMatch = line.match(/highlight-word\s+(\S+)/);
         if (wordMatch && wordMatch[1]) {
-          wordHighlights.push({ line: index, word: wordMatch[1] });
+          wordHighlights.push({ line: index, word: wordMatch[1], type: 'add' });
         }
       }
       
@@ -51,6 +51,26 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
         addLines.add(index + 1);
         linesToFilter.add(index); // Filter out the comment line
       }
+
+      // Check for word highlighting markers and remove them from the line
+      const deleteMatches = [...line.matchAll(/\[-([^-\]]+)-\]/g)];
+      const addMatches = [...line.matchAll(/\[\+([^+\]]+)\+\]/g)];
+
+      deleteMatches.forEach(match => {
+        if (match[1]) {
+          wordHighlights.push({ line: index, word: match[1], type: 'delete' });
+          // Remove the marker from the line
+          lines[index] = lines[index].replace(match[0], match[1]);
+        }
+      });
+
+      addMatches.forEach(match => {
+        if (match[1]) {
+          wordHighlights.push({ line: index, word: match[1], type: 'add' });
+          // Remove the marker from the line
+          lines[index] = lines[index].replace(match[0], match[1]);
+        }
+      });
     });
     
     // Find highlight-start and highlight-end blocks
@@ -72,7 +92,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
     
     // Adjust indices for the filtered lines
     const adjustedLineHighlights = new Set<number>();
-    const adjustedWordHighlights: {line: number, word: string}[] = [];
+    const adjustedWordHighlights: {line: number, word: string, type: 'add' | 'delete'}[] = [];
     const adjustedErrorLines = new Set<number>();
     const adjustedAddLines = new Set<number>();
     
@@ -99,10 +119,10 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
     });
     
     // Adjust word highlights
-    wordHighlights.forEach(({ line, word }) => {
+    wordHighlights.forEach(({ line, word, type }) => {
       if (!linesToFilter.has(line)) {
         const adjustedIndex = line - [...linesToFilter].filter(idx => idx < line).length;
-        adjustedWordHighlights.push({ line: adjustedIndex, word });
+        adjustedWordHighlights.push({ line: adjustedIndex, word, type });
       }
     });
     
@@ -184,7 +204,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
                                     <React.Fragment key={partIndex}>
                                       {part}
                                       {partIndex < parts.length - 1 && (
-                                        <span className="theme-code-block-highlighted-word">
+                                        <span className={`word-${wordToHighlight.type}`}>
                                           {wordToHighlight.word}
                                         </span>
                                       )}
