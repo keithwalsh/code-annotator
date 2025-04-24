@@ -4,7 +4,7 @@ import CodeHighlighter from './CodeHighlighter';
 
 const CodeEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState<string>(
-`\`\`\`javascript
+`\`\`\`javascript title="example.js"
 function example() {
 // Remove
   console.log("Hello world!");
@@ -13,24 +13,30 @@ function example() {
 \`\`\`
 `);
   
-  const [extractedCode, setExtractedCode] = useState<{ code: string, language: string }>({
+  const [extractedCode, setExtractedCode] = useState<{ 
+    code: string, 
+    language: string,
+    title?: string 
+  }>({
     code: '',
-    language: 'javascript'
+    language: 'javascript',
+    title: undefined
   });
 
   const [showLineNumbers, setShowLineNumbers] = useState(true);
 
   useEffect(() => {
     // Extract code blocks from markdown
-    const codeBlockRegex = /```(\w+)?\n([\s\S]*?)```/;
+    const codeBlockRegex = /```(\w+)(?:\s+title="([^"]*)")?\n([\s\S]*?)```/;
     const match = markdown.match(codeBlockRegex);
     
-    if (match && match.length >= 3) {
+    if (match && match.length >= 4) {
       const language = match[1] || 'javascript';
-      const code = match[2];
-      setExtractedCode({ code, language });
+      const title = match[2] || undefined;
+      const code = match[3];
+      setExtractedCode({ code, language, title });
     } else {
-      setExtractedCode({ code: '', language: 'javascript' });
+      setExtractedCode({ code: '', language: 'javascript', title: undefined });
     }
   }, [markdown]);
 
@@ -105,6 +111,7 @@ function example() {
             code={extractedCode.code} 
             language={extractedCode.language} 
             showLineNumbers={showLineNumbers}
+            title={extractedCode.title}
           />
         </Box>
       </Box>

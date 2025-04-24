@@ -1,18 +1,19 @@
 import React from 'react';
 import { Highlight, themes } from 'prism-react-renderer';
-import { Paper } from '@mui/material';
 import './CodeHighlighter.css';
 
 interface CodeHighlighterProps {
   code: string;
   language: string;
   showLineNumbers?: boolean;
+  title?: string;
 }
 
 const CodeHighlighter: React.FC<CodeHighlighterProps> = ({ 
   code, 
   language,
-  showLineNumbers = false 
+  showLineNumbers = false,
+  title
 }) => {
   // Process magic comments
   const processCodeWithMagicComments = (codeString: string) => {
@@ -123,93 +124,87 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   } = processCodeWithMagicComments(code);
 
   return (
-    <Paper 
-      elevation={3} 
-      sx={{ 
-        padding: '16px 16px 16px 24px',
-        overflow: 'auto',
-        height: '100%',
-        bgcolor: '#ffffff',
-        borderRadius: 1,
-        display: 'flex',
-        flexDirection: 'column'
-      }}
-    >
-      <Highlight
-        theme={themes.github}
-        code={processedCode}
-        language={language}
-      >
-        {({ className, style, tokens, getLineProps, getTokenProps }) => (
-          <pre className={className} style={{ 
-            ...style, 
-            margin: 0, 
-            height: '100%', 
-            overflow: 'auto',
-            position: 'relative',
-          }}>
-            {tokens.map((line, i) => {
-              // Special line styling
-              const lineProps = getLineProps({ line, key: i });
-              
-              // Apply line highlights
-              if (lineHighlights.has(i)) {
-                lineProps.className = `${lineProps.className} theme-code-block-highlighted-line`;
-              }
-              
-              // Apply error/add styling
-              if (errorLines.has(i)) {
-                lineProps.className = `${lineProps.className} code-block-error-line`;
-              }
-              if (addLines.has(i)) {
-                lineProps.className = `${lineProps.className} code-block-not-error-line`;
-              }
-
-              return (
-                <div key={i} {...lineProps} style={{ display: 'flex' }}>
-                  {showLineNumbers && (
-                    <span className="line-number-gutter">{i + 1}</span>
-                  )}
-                  <span className="line-content">
-                    {line.map((token, key) => {
-                      const tokenProps = getTokenProps({ token, key });
-                      
-                      // Check if this token contains a word to highlight
-                      const wordToHighlight = wordHighlights.find(
-                        wh => wh.line === i && token.content.includes(wh.word)
-                      );
-                      
-                      if (wordToHighlight) {
-                        // Highlight the specific word within the token
-                        const parts = token.content.split(wordToHighlight.word);
-                        if (parts.length > 1) {
-                          return (
-                            <span key={key}>
-                              {parts.map((part, partIndex) => (
-                                <React.Fragment key={partIndex}>
-                                  {part}
-                                  {partIndex < parts.length - 1 && (
-                                    <span className="theme-code-block-highlighted-word">
-                                      {wordToHighlight.word}
-                                    </span>
-                                  )}
-                                </React.Fragment>
-                              ))}
-                            </span>
-                          );
-                        }
-                      }
-                      
-                      return <span key={key} {...tokenProps} />;
-                    })}
-                  </span>
-                </div>
-              );
-            })}
-          </pre>
+      <div className="codeBlockContainer">
+        {title && (
+          <div className="codeBlockTitle">
+            {title}
+          </div>
         )}
-      </Highlight>
-    </Paper>
+          <Highlight
+            theme={themes.github}
+            code={processedCode}
+            language={language}
+          >
+            {({ className, style, tokens, getLineProps, getTokenProps }) => (
+              <pre className={className} style={{ 
+                ...style, 
+                margin: 0, 
+                height: '100%', 
+                overflow: 'auto',
+                position: 'relative',
+              }}>
+                {tokens.map((line, i) => {
+                  // Special line styling
+                  const lineProps = getLineProps({ line, key: i });
+                  
+                  // Apply line highlights
+                  if (lineHighlights.has(i)) {
+                    lineProps.className = `${lineProps.className} theme-code-block-highlighted-line`;
+                  }
+                  
+                  // Apply error/add styling
+                  if (errorLines.has(i)) {
+                    lineProps.className = `${lineProps.className} code-block-error-line`;
+                  }
+                  if (addLines.has(i)) {
+                    lineProps.className = `${lineProps.className} code-block-not-error-line`;
+                  }
+
+                  return (
+                    <div key={i} {...lineProps} style={{ display: 'flex' }}>
+                      {showLineNumbers && (
+                        <span className="line-number-gutter">{i + 1}</span>
+                      )}
+                      <span className="line-content">
+                        {line.map((token, key) => {
+                          const tokenProps = getTokenProps({ token, key });
+                          
+                          // Check if this token contains a word to highlight
+                          const wordToHighlight = wordHighlights.find(
+                            wh => wh.line === i && token.content.includes(wh.word)
+                          );
+                          
+                          if (wordToHighlight) {
+                            // Highlight the specific word within the token
+                            const parts = token.content.split(wordToHighlight.word);
+                            if (parts.length > 1) {
+                              return (
+                                <span key={key}>
+                                  {parts.map((part, partIndex) => (
+                                    <React.Fragment key={partIndex}>
+                                      {part}
+                                      {partIndex < parts.length - 1 && (
+                                        <span className="theme-code-block-highlighted-word">
+                                          {wordToHighlight.word}
+                                        </span>
+                                      )}
+                                    </React.Fragment>
+                                  ))}
+                                </span>
+                              );
+                            }
+                          }
+                          
+                          return <span key={key} {...tokenProps} />;
+                        })}
+                      </span>
+                    </div>
+                  );
+                })}
+              </pre>
+            )}
+          </Highlight>
+      </div>
   );
 };
 
