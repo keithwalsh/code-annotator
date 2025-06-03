@@ -1,3 +1,10 @@
+pre {
+  font-family: monospace !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  white-space: pre-wrap !important;
+}
+
 .line-number-gutter {
   display: inline-block;
   padding: 0 1rem;
@@ -15,6 +22,20 @@
   padding-left: 38px;
 }
 
+.code-line {
+  display: flex;
+  align-items: stretch;
+  min-height: 1.5em;
+}
+
+.theme-code-block-highlighted-line {
+  background-color: rgba(255, 255, 0, 0.1);
+  display: block;
+  margin: 0 -1rem;
+  padding: 0 1rem;
+  border-left: 3px solid rgba(255, 193, 7, 0.6);
+}
+
 .code-block-error-line .line-content .code-block-not-error-line{
     flex: 1;
     position: relative;
@@ -23,9 +44,11 @@
   
 
 .code-block-error-line {
-    background-color: rgba(255, 0, 0, 0.09);
+    background-color: #ffebe9;
     display: block;
     position: relative;
+    margin: 0 -1rem;
+    padding: 0 1rem;
   }
 
 .code-block-error-line::before {
@@ -35,20 +58,17 @@
   left: 3px;
   top: 0;
   color: rgb(255, 0, 0);
-  font-weight: bold;
-  font-family: monospace;
-  font-size: 16px;
-}
-
-.code-block-error-line::before {
-  border-left: 10px solid rgba(255, 0, 0, 0.5);
-  margin-left: -10px;
+  border-left: 30px solid rgba(255, 0, 0, 0.5);
+  margin-left: -14px;
+  font-weight: bold !important;
 }
 
 .code-block-not-error-line {
-  background-color: rgba(0, 200, 0, 0.1);
+  background-color: #dafbe1;
   display: block;
   position: relative;
+  margin: 0 -1rem;
+  padding: 0 1rem;
 }
 
 .code-block-not-error-line::before {
@@ -58,14 +78,9 @@
   left: 3px;
   top: 0;
   color: rgb(0, 160, 0);
-  font-weight: bold;
-  font-family: monospace;
-  font-size: 16px;
-}
-
-.code-block-not-error-line::before {
-  border-left: 10px solid rgba(0, 160, 0, 0.5);
-  margin-left: -10px;
+  border-left: 30px solid rgba(0, 160, 0, 0.5);
+  margin-left: -14px;
+  font-weight: bold !important;
 }
 
 .codeBlockTitle {
@@ -77,6 +92,7 @@
   border-top-right-radius: inherit;
   font-family: system-ui !important;
   letter-spacing: 0px !important;
+  background: #f6f8fa;
 }
 
 .codeBlockContainer {
@@ -88,14 +104,26 @@
   flex-direction: column;
   overflow: hidden;
   border-radius: 4px;
+  border: 1px solid #e1e4e8;
+}
+
+.codeBlockContainer pre {
+  margin: 0;
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.5;
 }
 
 .word-delete {
   color: #1f2328;
   background-color: #ffcecb;
+  padding: 2px 4px;
+  border-radius: 3px;
 }
 
 .word-add {
   color: #1f2328;
   background-color: #aceebb;
+  padding: 2px 4px;
+  border-radius: 3px;
 } 

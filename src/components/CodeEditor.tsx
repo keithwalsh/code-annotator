@@ -4,15 +4,10 @@ import CodeHighlighter from './CodeHighlighter';
 
 const CodeEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState<string>(
-`\`\`\`javascript title="example.js"
-function sum(a) {
-  // Remove
-  const t = a[0].p * [-2.1-];
-  // Add
-  const t = a[0].p * [+3.2+];
-
-  return a[0].p + t;
-}
+`\`\`\`php title="simple.php"
+<?php
+echo "Hello World";
+?>
 \`\`\`
 `);
   
@@ -29,18 +24,29 @@ function sum(a) {
   const [showLineNumbers, setShowLineNumbers] = useState(true);
 
   useEffect(() => {
-    // Extract code blocks from markdown
-    const codeBlockRegex = /```(\w+)(?:\s+title="([^"]*)")?\n([\s\S]*?)```/;
+    // Extract code blocks from markdown with improved regex
+    const codeBlockRegex = /```(?:([\w+-]*)\s*)?(?:title="([^"]*)")?\n([\s\S]*?)```/;
     const match = markdown.match(codeBlockRegex);
     
-    if (match && match.length >= 4) {
-      const language = match[1] || 'javascript';
+    console.log('===== CODE EXTRACTION DEBUG =====');
+    console.log('Input markdown:', JSON.stringify(markdown));
+    console.log('Regex match result:', match);
+    
+    if (match) {
+      const language = match[1] ? match[1].trim() : 'plaintext';
       const title = match[2] || undefined;
       const code = match[3];
+      console.log('Extracted language:', JSON.stringify(language));
+      console.log('Extracted title:', JSON.stringify(title));
+      console.log('Extracted code:', JSON.stringify(code));
+      console.log('Code length:', code.length);
+      console.log('Code lines:', code.split('\n'));
       setExtractedCode({ code, language, title });
     } else {
-      setExtractedCode({ code: '', language: 'javascript', title: undefined });
+      console.log('No match found - using defaults');
+      setExtractedCode({ code: '', language: 'plaintext', title: undefined });
     }
+    console.log('=================================');
   }, [markdown]);
 
   const handleMarkdownChange = (event: React.ChangeEvent<HTMLInputElement>) => {
