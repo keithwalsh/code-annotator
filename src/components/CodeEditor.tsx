@@ -1,61 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { Box, TextField, Paper, Typography, FormControlLabel, Switch } from '@mui/material';
+import React, { useState, useMemo, useCallback } from 'react';
+import { Box, TextField, Typography, FormControlLabel, Switch } from '@mui/material';
 import CodeHighlighter from './CodeHighlighter';
+
+// Utility to extract code, language, and optional title from a markdown block
+const extractCodeBlock = (md: string): { code: string; language: string; title?: string } => {
+  const codeBlockRegex = /```(?:([\w+-]*)\s*)?(?:title="([^"]*)")?\n([\s\S]*?)```/;
+  const match = md.match(codeBlockRegex);
+
+  if (match) {
+    const language = match[1]?.trim() || 'plaintext';
+    const title = match[2] || undefined;
+    const code = match[3];
+    return { code, language, title };
+  }
+
+  return { code: '', language: 'plaintext', title: undefined };
+};
 
 const CodeEditor: React.FC = () => {
   const [markdown, setMarkdown] = useState<string>(
 `\`\`\`php title="simple.php"
 <?php
-echo "Hello World";
+// Remove
+echo "Hello [-Room-]";
+// Add
+echo "Hello [+World+]";
 ?>
 \`\`\`
 `);
   
-  const [extractedCode, setExtractedCode] = useState<{ 
-    code: string, 
-    language: string,
-    title?: string 
-  }>({
-    code: '',
-    language: 'javascript',
-    title: undefined
-  });
-
   const [showLineNumbers, setShowLineNumbers] = useState(true);
 
-  useEffect(() => {
-    // Extract code blocks from markdown with improved regex
-    const codeBlockRegex = /```(?:([\w+-]*)\s*)?(?:title="([^"]*)")?\n([\s\S]*?)```/;
-    const match = markdown.match(codeBlockRegex);
-    
-    console.log('===== CODE EXTRACTION DEBUG =====');
-    console.log('Input markdown:', JSON.stringify(markdown));
-    console.log('Regex match result:', match);
-    
-    if (match) {
-      const language = match[1] ? match[1].trim() : 'plaintext';
-      const title = match[2] || undefined;
-      const code = match[3];
-      console.log('Extracted language:', JSON.stringify(language));
-      console.log('Extracted title:', JSON.stringify(title));
-      console.log('Extracted code:', JSON.stringify(code));
-      console.log('Code length:', code.length);
-      console.log('Code lines:', code.split('\n'));
-      setExtractedCode({ code, language, title });
-    } else {
-      console.log('No match found - using defaults');
-      setExtractedCode({ code: '', language: 'plaintext', title: undefined });
-    }
-    console.log('=================================');
-  }, [markdown]);
+  // Extract code block information whenever markdown changes
+  const extractedCode = useMemo(() => extractCodeBlock(markdown), [markdown]);
 
-  const handleMarkdownChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleMarkdownChange = useCallback((event: React.ChangeEvent<HTMLInputElement>) => {
     setMarkdown(event.target.value);
-  };
+  }, []);
 
-  const handleLineNumberToggle = () => {
-    setShowLineNumbers(!showLineNumbers);
-  };
+  const handleLineNumberToggle = useCallback(() => {
+    setShowLineNumbers(prev => !prev);
+  }, []);
 
   return (
     <Box sx={{ flexGrow: 1, padding: 3, height: '100vh', width: '100vw' }}>
@@ -75,21 +60,14 @@ echo "Hello World";
         gap: 2,
         height: 'calc(100% - 80px)'
       }}>
-        <Box sx={{ 
-          width: { xs: '100%', md: '50%' }, 
-          height: '100%' 
+        <Box 
+        
+        sx={{ 
+          width: { xs: '100%', md: '50%' },
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
-          <Paper 
-            elevation={3} 
-            sx={{ 
-              height: '100%', 
-              p: 0, 
-              borderRadius: 1,
-              overflow: 'hidden',
-              display: 'flex',
-              flexDirection: 'column'
-            }}
-          >
             <TextField
               label="Markdown Input"
               multiline
@@ -110,7 +88,6 @@ echo "Hello World";
                 }
               }}
             />
-          </Paper>
         </Box>
         <Box sx={{ 
           width: { xs: '100%', md: '50%' }, 
