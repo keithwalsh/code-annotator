@@ -1,33 +1,107 @@
-# Code Highlighter
+# Code Annotator
 
-A tool for highlighting code snippets in training documents and Jira tickets at work.
+A web-based Markdown playground that turns annotated code blocks into highlighted snippets.
 
-## Project Notes
+## Features
 
-- Need to clean up the Add/Remove line highlighting functionality
-- ✅ Test highlighting for PHP code - now supports PHP syntax with `#` and `//` comments
-- Implement framing to include language and file path in the rendering
+• **Live preview** – Write Markdown with fenced code blocks and see a preview on the right-hand side.<br/>
+• **PrismJS syntax highlighting** – Supports popular languages out-of-the-box (PHP, JS/TS, CSS, Bash, SQL, JSON, Markdown, …).<br/>
+• **Magic comments** – Add special comments or markers to enrich diffs:
+  * `// highlight-next-line` – highlight the next line.
+  * `// highlight-start` … `// highlight-end` – highlight a whole block.
+  * `// Remove` / `// Add` – mark lines as deletions or additions (rendered with red/green gutters).
+  * Inline markers `[-word-]` / `[+word+]` – highlight individual words as removed/added.
+• **Line numbers toggle** – Quickly show or hide line numbers with a switch.
+• **Responsive layout** – Stacks vertically on small screens, side-by-side on wide screens.
+• **Theming via MUI** – Easily switch to dark mode or customise the theme.
 
-## Supported Languages
+---
 
-The CodeHighlighter component supports all languages that Prism.js supports, including:
-- JavaScript/TypeScript
-- PHP
-- Python  
-- HTML/CSS
-- Java
-- C/C++
-- And many more...
+## Quick start
 
-## Magic Comments
+1. **Install dependencies** (Node ≥ 18 recommended):
 
-The component supports magic comments for highlighting in multiple comment styles:
-- JavaScript/TypeScript: `// Add`, `// Remove`, `// highlight-next-line`
-- PHP: `# Add`, `# Remove`, `# highlight-next-line` or `// Add`, `// Remove`, `// highlight-next-line`
-- HTML: `<!-- Add -->`, `<!-- Remove -->`, `<!-- highlight-next-line -->`
+   ```bash
+   pnpm install  # or npm ci / yarn
+   ```
 
-## Todo
+2. **Start the dev server**:
 
-- [x] Refine Add/Remove line highlighting
-- [x] Add language and file path display in rendered output
-- [x] Test with PHP code samples
+   ```bash
+   pnpm dev  # http://localhost:5173
+   ```
+
+3. **Build for production**:
+
+   ```bash
+   pnpm build
+   ```
+
+4. **Preview the production build**:
+
+   ```bash
+   pnpm preview  # http://localhost:4173
+   ```
+
+> The project is bundled with **Vite 6** and **TypeScript 5**.
+
+---
+
+## Available scripts
+
+| Script          | Description                                     |
+| --------------- | ----------------------------------------------- |
+| `pnpm dev`      | Starts Vite in dev mode with HMR                |
+| `pnpm build`    | Type-checks then produces an optimised build    |
+| `pnpm preview`  | Serves the production files for inspection      |
+| `pnpm lint`     | Runs ESLint (strict config powered by `@eslint/js`, `typescript-eslint`, and React hooks rules) |
+| `gp`            | Handy Git alias – stages, commits (`"update"`) and pushes (see `gitpush.bat`) |
+
+---
+
+## Folder structure
+
+```text
+code-annotator/
+├─ public/                # Static assets served at the site root
+├─ src/
+│  ├─ assets/             # Local images / icons
+│  │  ├─ CodeEditor.tsx   # Markdown textarea & controls
+│  │  ├─ CodeHighlighter.tsx  # Rendering + magic-comment logic
+│  │  └─ CodeHighlighter.css  # Custom styling
+│  ├─ App.tsx             # Entry component – applies MUI theme
+│  ├─ main.tsx            # React 19 root
+│  └─ …
+├─ vite.config.ts         # Vite configuration (React plugin, relative base)
+├─ tsconfig*.json         # TypeScript build targets for app & node
+├─ eslint.config.js       # Modern flat ESLint config
+└─ …
+```
+
+---
+
+## Writing magic comments
+
+```php title="simple.php"
+<?php
+// Remove
+-$oldVariable = 123;
+// Add
++$newVariable = 456;
+
+// highlight-next-line
+echo "Highlighted line";
+
+// highlight-start
+$block = true;
+$block = true;
+// highlight-end
+
+// Inline markers also work:
+print "Hello [-Room-] and [+World+]";
+?>
+```
+
+The component parses your Markdown, strips helper comments, and renders colour-coded additions/deletions plus optional word-level highlights.
+
+---
