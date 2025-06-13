@@ -15,7 +15,7 @@ import 'prismjs/components/prism-markdown';
 import 'prismjs/components/prism-sql';
 import 'prismjs/themes/prism.css';
 
-interface CodeHighlighterProps {
+export interface CodeHighlighterProps {
   code: string;
   language: string;
   showLineNumbers?: boolean;
