@@ -20,13 +20,15 @@ export interface CodeHighlighterProps {
   language: string;
   showLineNumbers?: boolean;
   title?: string;
+  style?: React.CSSProperties;
 }
 
 const CodeHighlighter: React.FC<CodeHighlighterProps> = ({ 
   code, 
   language,
   showLineNumbers = false,
-  title
+  title,
+  style
 }) => {
   useEffect(() => {
     // PrismJS is already loaded via static imports, just log debug info
@@ -40,12 +42,8 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
 
   // Process magic comments
   const processCodeWithMagicComments = (codeString: string) => {
-    console.log('===== MAGIC COMMENT PROCESSING =====');
-    console.log('Input code:', JSON.stringify(codeString));
     
     const lines = codeString.split('\n');
-    console.log('Input lines:', lines);
-    
     const lineHighlights = new Set<number>();
     const wordHighlights: {line: number, word: string, type: 'add' | 'delete'}[] = [];
     const errorLines = new Set<number>();
@@ -126,11 +124,6 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
     // Filter out the marker comment lines
     const filteredLines = lines.filter((_, index) => !linesToFilter.has(index));
     
-    console.log('Lines to filter:', Array.from(linesToFilter));
-    console.log('Filtered lines:', filteredLines);
-    console.log('Final processed code:', JSON.stringify(filteredLines.join('\n')));
-    console.log('=====================================');
-    
     // Adjust indices for the filtered lines
     const adjustedLineHighlights = new Set<number>();
     const adjustedWordHighlights: {line: number, word: string, type: 'add' | 'delete'}[] = [];
@@ -189,11 +182,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
     try {
       // Check if language is supported
       if (Prism.languages && Prism.languages[lang]) {
-        // For debugging
-        console.log(`Attempting to highlight ${lang}:`, JSON.stringify(code));
-        console.log('Grammar being used:', Prism.languages[lang]);
         const highlighted = Prism.highlight(code, Prism.languages[lang], lang);
-        console.log(`Highlighted result:`, highlighted);
         return highlighted;
       } else {
         console.warn(`Language ${lang} not supported. Available:`, Object.keys(Prism.languages || {}));
@@ -212,7 +201,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   const highlightedLines = highlightedCode.split('\n');
 
   return (
-    <div className="codeBlockContainer">
+    <div className="codeBlockContainer" style={style}>
       {title && (
         <div className="codeBlockTitle">
           {title}
@@ -220,7 +209,7 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
       )}
       <pre className={`language-${language}`} style={{ 
         margin: 0, 
-        height: '100%', 
+        flex: 1,
         overflow: 'auto',
         position: 'relative',
         background: '#f6f8fa',

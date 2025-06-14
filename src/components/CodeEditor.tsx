@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useCallback } from 'react';
-import { Box, TextField, Typography, FormControlLabel, Switch } from '@mui/material';
+import { Box, TextField, FormControlLabel, Switch } from '@mui/material';
 import CodeHighlighter from './CodeHighlighter';
 
 // Utility to extract code, language, and optional title from a markdown block
@@ -43,11 +43,8 @@ echo "Hello [+World+]";
   }, []);
 
   return (
-    <Box sx={{ flexGrow: 1, padding: 3, height: '100vh', width: '100vw' }}>
+    <Box sx={{ flexGrow: 1, padding: 0, width: '100%', height: '100vh' }}>
       <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-        <Typography variant="h4" component="h1">
-          Code Highlighter
-        </Typography>
         <FormControlLabel
           control={<Switch checked={showLineNumbers} onChange={handleLineNumberToggle} />}
           label="Show Line Numbers"
@@ -75,29 +72,48 @@ echo "Hello [+World+]";
               variant="outlined"
               value={markdown}
               onChange={handleMarkdownChange}
+              rows={20}
+              InputProps={{
+                sx: {
+                  height: '100%',
+                  alignItems: 'flex-start',
+                  fontFamily: 'monospace',
+                  '& textarea': {
+                    height: '100% !important',
+                    resize: 'none',
+                    overflow: 'auto !important',
+                  }
+                }
+              }}
               sx={{ 
                 flexGrow: 1,
+                height: '100%',
                 '& .MuiInputBase-root': {
-                  fontFamily: 'monospace',
                   height: '100%',
-                  alignItems: 'flex-start'
                 },
-                '& .MuiInputBase-input': {
-                  overflow: 'auto',
-                  height: '100% !important'
+                '& .MuiOutlinedInput-root': {
+                  height: '100%',
+                },
+                '& .MuiInputBase-inputMultiline': {
+                  height: '100% !important',
+                  overflow: 'auto !important',
+                  resize: 'none',
                 }
               }}
             />
         </Box>
         <Box sx={{ 
           width: { xs: '100%', md: '50%' }, 
-          height: '100%'
+          height: '100%',
+          display: 'flex',
+          flexDirection: 'column'
         }}>
           <CodeHighlighter 
             code={extractedCode.code} 
             language={extractedCode.language} 
             showLineNumbers={showLineNumbers}
             title={extractedCode.title}
+            style={{ height: '100%' }}
           />
         </Box>
       </Box>
