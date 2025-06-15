@@ -1,6 +1,152 @@
 # Code Annotator
 
-A web-based Markdown playground that turns annotated code blocks into highlighted snippets.
+A React component for syntax highlighting with annotation support, designed to work seamlessly with Material-UI themes.
+
+## Installation
+
+```bash
+npm install code-annotator
+```
+
+## Peer Dependencies
+
+This package requires the following peer dependencies:
+
+```json
+{
+  "@mui/material": "^6.0.0 || ^7.0.0",
+  "react": "^18.0.0 || ^19.0.0",
+  "react-dom": "^18.0.0 || ^19.0.0"
+}
+```
+
+## Usage with MUI Theme Integration
+
+### Basic Setup
+
+The components automatically respond to your MUI theme changes. Simply wrap your app with `ThemeProvider`:
+
+```tsx
+import React from 'react';
+import { ThemeProvider, createTheme, CssBaseline } from '@mui/material';
+import { CodeHighlighter } from 'code-annotator';
+// Import the CSS styles
+import 'code-annotator/styles';
+
+const theme = createTheme({
+  palette: {
+    mode: 'dark', // or 'light'
+  },
+});
+
+function App() {
+  return (
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
+      <CodeHighlighter
+        code={`console.log("Hello World!");`}
+        language="javascript"
+        showLineNumbers={true}
+      />
+    </ThemeProvider>
+  );
+}
+```
+
+### Dynamic Theme Switching
+
+When you change your MUI theme mode, the code highlighter will automatically update:
+
+```tsx
+import React, { useState, useMemo } from 'react';
+import { ThemeProvider, createTheme, Switch, FormControlLabel } from '@mui/material';
+import { CodeHighlighter } from 'code-annotator';
+import 'code-annotator/styles';
+
+function App() {
+  const [mode, setMode] = useState<'light' | 'dark'>('light');
+
+  const theme = useMemo(
+    () => createTheme({
+      palette: { mode },
+    }),
+    [mode],
+  );
+
+  return (
+    <ThemeProvider theme={theme}>
+      <FormControlLabel
+        control={
+          <Switch 
+            checked={mode === 'dark'} 
+            onChange={() => setMode(mode === 'light' ? 'dark' : 'light')} 
+          />
+        }
+        label="Dark Mode"
+      />
+      <CodeHighlighter
+        code={`const greeting = "Hello World!";`}
+        language="javascript"
+        showLineNumbers={true}
+      />
+    </ThemeProvider>
+  );
+}
+```
+
+## Key Features
+
+- **Automatic Theme Detection**: Uses `useTheme()` from MUI to detect theme changes
+- **No Configuration Required**: Just ensure your app has a `ThemeProvider`
+- **Syntax Highlighting**: Supports multiple languages via PrismJS
+- **Code Annotations**: Support for diff-style annotations and highlights
+
+## Requirements for Theme Integration
+
+1. **ThemeProvider**: Your app must be wrapped with MUI's `ThemeProvider`
+2. **CSS Import**: Import the styles using `import 'code-annotator/styles'`
+3. **MUI Theme**: Your theme should have `palette.mode` set to either `'light'` or `'dark'`
+
+The component will automatically:
+- Detect theme changes via `useTheme()` hook
+- Apply appropriate CSS classes (`prism-dark-theme` for dark mode)
+- Update background colors and text colors dynamically
+
+## API
+
+### CodeHighlighter Props
+
+```tsx
+interface CodeHighlighterProps {
+  code: string;
+  language: string;
+  showLineNumbers?: boolean;
+  title?: string;
+  style?: React.CSSProperties;
+}
+```
+
+## Troubleshooting
+
+If the theme is not updating:
+
+1. Ensure your app is wrapped with `ThemeProvider`
+2. Verify you've imported the CSS: `import 'code-annotator/styles'`
+3. Check that your theme has `palette.mode` defined
+4. Make sure all peer dependencies are installed
+
+## Example Project Structure
+
+```
+your-app/
+├── src/
+│   ├── App.tsx (with ThemeProvider)
+│   ├── components/
+│   │   └── CodeExample.tsx (uses CodeHighlighter)
+│   └── index.tsx
+├── package.json (with peer dependencies)
+└── ...
+```
 
 ## Features
 

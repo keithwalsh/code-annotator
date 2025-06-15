@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import { useTheme } from '@mui/material/styles';
 import './CodeHighlighter.css';
 
 // Import PrismJS and languages synchronously at module level
@@ -13,6 +14,7 @@ import 'prismjs/components/prism-bash';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-markdown';
 import 'prismjs/components/prism-sql';
+// Import light theme as base
 import 'prismjs/themes/prism.css';
 
 export interface CodeHighlighterProps {
@@ -30,6 +32,10 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   title,
   style
 }) => {
+  const muiTheme = useTheme();
+  const backgroundColor = muiTheme.palette.mode === 'dark' ? '#1e1e1e' : '#f6f8fa';
+  const textColor = muiTheme.palette.mode === 'dark' ? '#d4d4d4' : '#393A34';
+
   useEffect(() => {
     // PrismJS is already loaded via static imports, just log debug info
     console.log('PrismJS static import loaded, available languages:', Object.keys(Prism.languages || {}));
@@ -201,9 +207,9 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   const highlightedLines = highlightedCode.split('\n');
 
   return (
-    <div className="codeBlockContainer" style={style}>
+    <div className={`codeBlockContainer ${muiTheme.palette.mode === 'dark' ? 'prism-dark-theme' : ''}`} style={{ ...style, background: backgroundColor, color: textColor }}>
       {title && (
-        <div className="codeBlockTitle">
+        <div className="codeBlockTitle" style={{ background: backgroundColor }}>
           {title}
         </div>
       )}
@@ -212,8 +218,8 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
         flex: 1,
         overflow: 'auto',
         position: 'relative',
-        background: '#f6f8fa',
-        color: '#393A34',
+        background: backgroundColor,
+        color: textColor,
         padding: '1rem',
         borderRadius: '4px',
       }}>
