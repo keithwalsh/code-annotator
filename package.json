@@ -1,6 +1,6 @@
 {
   "name": "code-annotator",
-  "version": "0.0.15",
+  "version": "0.2.5",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -44,7 +44,8 @@
     "./styles": {
       "types": "./styles.d.ts",
       "default": "./dist/CodeHighlighter.css"
-    }
+    },
+    "./dist/index.css": "./dist/index.css"
   },
   "files": [
     "dist",

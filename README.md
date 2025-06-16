@@ -135,6 +135,41 @@ If the theme is not updating:
 3. Check that your theme has `palette.mode` defined
 4. Make sure all peer dependencies are installed
 
+### Verifying Language Support
+
+If syntax highlighting isn't working for PHP or other languages:
+
+```tsx
+import { ensureLanguagesLoaded } from 'code-annotator';
+
+const MyComponent = () => {
+  useEffect(() => {
+    const status = ensureLanguagesLoaded();
+    console.log('Language status:', status);
+    if (!status.isPhpLoaded) {
+      console.error('PHP language not loaded!');
+    }
+  }, []);
+  
+  return (
+    <CodeHighlighter
+      code="<?php echo 'Hello World'; ?>"
+      language="php"
+      showLineNumbers={true}
+    />
+  );
+};
+```
+
+All supported languages are bundled automatically:
+- `php` - PHP syntax highlighting
+- `javascript` / `typescript` - JavaScript and TypeScript
+- `css` - CSS and styling
+- `bash` - Shell scripts
+- `json` - JSON data
+- `markdown` - Markdown syntax
+- `sql` - SQL queries
+
 ## Example Project Structure
 
 ```

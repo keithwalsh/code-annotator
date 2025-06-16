@@ -1,21 +1,7 @@
 import React, { useEffect } from 'react';
 import { useTheme } from '@mui/material/styles';
+import { Prism, ensureLanguagesLoaded } from '../prism-languages';
 import './CodeHighlighter.css';
-
-// Import PrismJS and languages synchronously at module level
-import Prism from 'prismjs';
-import 'prismjs/components/prism-markup';
-import 'prismjs/components/prism-markup-templating';
-import 'prismjs/components/prism-php';
-import 'prismjs/components/prism-javascript';
-import 'prismjs/components/prism-typescript';
-import 'prismjs/components/prism-css';
-import 'prismjs/components/prism-bash';
-import 'prismjs/components/prism-json';
-import 'prismjs/components/prism-markdown';
-import 'prismjs/components/prism-sql';
-// Import light theme as base
-import 'prismjs/themes/prism.css';
 
 export interface CodeHighlighterProps {
   code: string;
@@ -37,12 +23,11 @@ const CodeHighlighter: React.FC<CodeHighlighterProps> = ({
   const textColor = muiTheme.palette.mode === 'dark' ? '#d4d4d4' : '#393A34';
 
   useEffect(() => {
-    // PrismJS is already loaded via static imports, just log debug info
-    console.log('PrismJS static import loaded, available languages:', Object.keys(Prism.languages || {}));
-    console.log('PHP language loaded:', !!Prism.languages?.php);
-    if (Prism.languages?.php) {
-      console.log('PHP grammar object keys:', Object.keys(Prism.languages.php));
-      console.log('PHP grammar object:', Prism.languages.php);
+    // Verify all languages are loaded
+    const languageStatus = ensureLanguagesLoaded();
+    console.log('PrismJS language status:', languageStatus);
+    if (!languageStatus.isPhpLoaded) {
+      console.warn('PHP language not loaded! Available languages:', languageStatus.loaded);
     }
   }, []);
 
